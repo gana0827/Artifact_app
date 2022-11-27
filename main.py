@@ -21,7 +21,7 @@ app = Flask(__name__)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-model = load_model('./my_model (2).h5')#学習済みモデルをロード
+model = load_model('./my_model (3).h5')#学習済みモデルをロード
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -43,6 +43,10 @@ def upload_file():
             img = image.load_img(filepath, grayscale=False, target_size=(image_size,image_size))
             img = image.img_to_array(img)
             data = np.array([img])
+            
+            #RGBをBGRに逆順にする
+            data = data[:,:,:,::-1]
+            
             #変換したデータをモデルに渡して予測する
             result = model.predict(data)[0]
             predicted = result.argmax()
